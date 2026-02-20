@@ -19,7 +19,7 @@
 #define THRUST_V_PWM_R            8
 #define LIGHT_POWER               22
 #define MOISTURE_POWER            23
-#define LED_HEARTBEAT             LED_BUILTIN
+#define LED_HEARTBEAT             24
 #define LED_ACTIVITY              25
 #define LED_FAULT                 26
 
@@ -33,6 +33,8 @@
 Adafruit_MPU6050 mpu;
 sensors_event_t a, g, temp;
 ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
+bool hbState;
+bool lightState;
 
 void motorStop(void);
 void moveForward(void);
@@ -55,8 +57,6 @@ float getIMUAccelz(void);
 float getIMUGyrolX(void);
 float getIMUGyrolY(void);
 float getIMUGyrolZ(void);
-
-bool hbState;
 
 #define __ROV_CONTROL.H_DEFINED__ 1
 #endif

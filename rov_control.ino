@@ -19,6 +19,8 @@ void setup() {
   pinMode(LED_FAULT, OUTPUT);
 
   hbState = HIGH;
+  lightState = LOW;
+  
   digitalWrite(LED_ACTIVITY, HIGH);
   digitalWrite(LED_HEARTBEAT, HIGH);
   digitalWrite(LED_FAULT, HIGH);
@@ -97,6 +99,12 @@ void getCommand(void) {
   else if(cmd == "VSTOP") {
     vStop(); 
   }
+  else if(cmd == "LON") {
+    lightOn();
+  }
+  else if(cmd == "LOFF") {
+    lightOff();
+  }
   digitalWrite(LED_ACTIVITY, LOW);
 }
 
@@ -133,6 +141,12 @@ void sendLogData(void) {
   dataBlock += ",";
   dataBlock += "\"gyro_z\": ";
   dataBlock += (String)getIMUGyroZ();
+  dataBlock += ",";
+  dataBlock += "\"light\": ";
+  if(lightState == HIGH)
+    dataBlock += "on";
+  else
+    dataBlock += "off";
   dataBlock += "}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
@@ -234,6 +248,22 @@ void moveDown(void) {
 #endif
   analogWrite(THRUST_V_PWM_L, PWM_V_L);
   analogWrite(THRUST_V_PWM_R, 0);
+}
+
+void lightOn(void) {
+#ifdef __DEBUG__
+  Serial.println("lightOn");
+#endif
+  lightState = HIGH;
+  digitalWrite(LIGHT_POWER, lightState);
+}
+
+void lightOff(void) {
+#ifdef __DEBUG__
+  Serial.println("lightOff");
+#endif
+  lightState = LOW;
+  digitalWrite(LIGHT_POWER, lightState);
 }
 
 float getVolts(void) {
