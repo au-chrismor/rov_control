@@ -19,9 +19,9 @@
 #define THRUST_V_PWM_R            8
 #define LIGHT_POWER               22
 #define MOISTURE_POWER            23
-#define LED_HEARTBEAT             24
-#define LED_ACTIVITY              25
-#define LED_FAULT                 26
+#define LED_HEARTBEAT             4
+#define LED_ACTIVITY              3
+#define LED_FAULT                 5
 
 #define PWM_L_L                   128
 #define PWM_L_R                   128
