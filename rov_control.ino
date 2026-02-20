@@ -30,7 +30,7 @@ void setup() {
   motorStop();
 
   if(digitalRead(EEPROM_CLEAR) == LOW) {
-    
+    wipeEeprom();
   }
 
 #ifdef __DEBUG__
