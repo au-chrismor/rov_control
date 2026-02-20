@@ -250,9 +250,9 @@ void moveForward(void) {
   Serial.println("moveForward");
 #endif
   analogWrite(THRUST_L_PWM_L, 0);
-  analogWrite(THRUST_L_PWM_R, PWM_L_R);
+  analogWrite(THRUST_L_PWM_R, pwmLR);
   analogWrite(THRUST_R_PWM_L, 0);
-  analogWrite(THRUST_R_PWM_R, PWM_R_R);
+  analogWrite(THRUST_R_PWM_R, pwmRR);
 }
 
 /* Move Backwards: Both horizontal thrusters REV, Vertical unchanged */
@@ -260,9 +260,9 @@ void moveReverse(void) {
 #ifdef __DEBUG__
   Serial.println("moveReverse");
 #endif
-  analogWrite(THRUST_L_PWM_L, PWM_L_L);
+  analogWrite(THRUST_L_PWM_L, pwmLL);
   analogWrite(THRUST_L_PWM_R, 0);
-  analogWrite(THRUST_R_PWM_L, PWM_R_L);
+  analogWrite(THRUST_R_PWM_L, pwmRL);
   analogWrite(THRUST_R_PWM_R, 0);
 }
 
@@ -271,10 +271,10 @@ void moveLeft(void) {
 #ifdef __DEBUG__
   Serial.println("moveLeft");
 #endif
-  analogWrite(THRUST_L_PWM_L, PWM_L_L);
+  analogWrite(THRUST_L_PWM_L, pwmLL);
   analogWrite(THRUST_L_PWM_R, 0);
   analogWrite(THRUST_R_PWM_L, 0);
-  analogWrite(THRUST_R_PWM_R, PWM_R_R);
+  analogWrite(THRUST_R_PWM_R, pwmRR);
 }
 
 /* Move Right: Right Horizontal REV, Left Horizontal FWD, Vertical unchanged */
@@ -283,8 +283,8 @@ void moveRight(void) {
   Serial.println("moveLeft");
 #endif
   analogWrite(THRUST_L_PWM_L, 0);
-  analogWrite(THRUST_L_PWM_R, PWM_L_R);
-  analogWrite(THRUST_R_PWM_L, PWM_R_L);
+  analogWrite(THRUST_L_PWM_R, pwmLR);
+  analogWrite(THRUST_R_PWM_L, pwmRL);
   analogWrite(THRUST_R_PWM_R, 0);
 }
 
@@ -294,7 +294,7 @@ void moveUp(void) {
   Serial.println("moveUp");
 #endif
   analogWrite(THRUST_V_PWM_L, 0);
-  analogWrite(THRUST_V_PWM_R, PWM_V_R);
+  analogWrite(THRUST_V_PWM_R, pwmVR);
 }
 
 /* Move Down: Vertical REV, Horizontal unchanged */
@@ -302,7 +302,7 @@ void moveDown(void) {
 #ifdef __DEBUG__
   Serial.println("moveDown");
 #endif
-  analogWrite(THRUST_V_PWM_L, PWM_V_L);
+  analogWrite(THRUST_V_PWM_L, pwmVL);
   analogWrite(THRUST_V_PWM_R, 0);
 }
 
