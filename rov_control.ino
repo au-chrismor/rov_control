@@ -6,10 +6,6 @@ void setup() {
 #ifdef __DEBUG__
   Serial.begin(115200);
   Serial.println("Cold Start");
-  Serial.println("Start RS485");
-#endif
-  Serial1.begin(9600);
-#ifdef __DEBUG__
   Serial.println("Port Setup");
 #endif
   pinMode(LIGHT_POWER, OUTPUT);
@@ -17,6 +13,7 @@ void setup() {
   pinMode(LED_HEARTBEAT, OUTPUT);
   pinMode(LED_ACTIVITY, OUTPUT);
   pinMode(LED_FAULT, OUTPUT);
+  pinMode(EEPROM_CLEAR, INPUT_PULLUP);
 
   hbState = HIGH;
   lightState = LOW;
@@ -25,7 +22,16 @@ void setup() {
   digitalWrite(LED_HEARTBEAT, HIGH);
   digitalWrite(LED_FAULT, HIGH);
 
+#ifdef __DEBUG__
+  Serial.println("Start RS485");
+#endif
+  Serial1.begin(9600);
+
   motorStop();
+
+  if(digitalRead(EEPROM_CLEAR) == LOW) {
+    
+  }
 
 #ifdef __DEBUG__
   Serial.println("ACS Setup");
@@ -51,6 +57,17 @@ void setup() {
     mpu.setGyroRange(MPU6050_RANGE_500_DEG);
     mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
   }
+  acs.autoMidPoint();
+
+#ifdef __DEBUG__
+  Serial.println("Load Config");
+#endif
+  pwmLL = EEPROM.read(PWM_L_L_ADDR);
+  pwmLR = EEPROM.read(PWM_L_R_ADDR);
+  pwmRL = EEPROM.read(PWM_R_L_ADDR);
+  pwmRR = EEPROM.read(PWM_R_R_ADDR);
+  pwmVL = EEPROM.read(PWM_V_L_ADDR);
+  pwmVR = EEPROM.read(PWM_V_R_ADDR);
 
   digitalWrite(LED_ACTIVITY, LOW);
   digitalWrite(LED_HEARTBEAT, LOW);
@@ -104,6 +121,45 @@ void getCommand(void) {
   }
   else if(cmd == "LOFF") {
     lightOff();
+  }
+  else if(cmd == "LL+") {
+    increasePwmLL();
+  }
+  else if(cmd == "LL-") {
+    decreasePwmLL();
+  }
+  else if(cmd == "LR+") {
+    increasePwmLR();
+  }
+  else if(cmd == "LR-") {
+    decreasePwmLR();
+  }
+  else if(cmd == "RL+") {
+    increasePwmRL();
+  }
+  else if(cmd == "RL-") {
+    decreasePwmRL();
+  }
+  else if(cmd == "RR+") {
+    increasePwmRR();
+  }
+  else if(cmd == "RR-") {
+    decreasePwmRR();
+  }
+  else if(cmd == "VL+") {
+    increasePwmVL();
+  }
+  else if(cmd == "VL-") {
+    decreasePwmVL();
+  }
+  else if(cmd == "VR+") {
+    increasePwmVR();
+  }
+  else if(cmd == "VR-") {
+    decreasePwmVR();
+  }
+  else if(cmd == "SAVE") {
+    saveConfig();
   }
   digitalWrite(LED_ACTIVITY, LOW);
 }
@@ -334,4 +390,143 @@ float getIMUGyroZ(void) {
   Serial.println("getIMUGyroX");
 #endif
   return g.gyro.z;
+}
+
+/* Erase and default EEPROM contents */
+void wipeEeprom(void) {
+#ifdef __DEBUG__
+  Serial.println("Default EEPROM");
+#endif
+  for(int i = 0; i < EEPROM.length(); i++) {
+    EEPROM.write(i, 0);
+  }
+  EEPROM.write(PWM_L_L_ADDR, PWM_L_L);
+  EEPROM.write(PWM_L_R_ADDR, PWM_L_R);
+  EEPROM.write(PWM_R_L_ADDR, PWM_R_L);
+  EEPROM.write(PWM_R_R_ADDR, PWM_R_R);
+  EEPROM.write(PWM_V_L_ADDR, PWM_V_L);
+  EEPROM.write(PWM_V_R_ADDR, PWM_V_R);
+
+#ifdef __DEBUG__
+  Serial.println("Remove link and reset!");
+#endif
+
+  while(1) {
+    digitalWrite(LED_ACTIVITY, HIGH);
+    digitalWrite(LED_HEARTBEAT, HIGH);
+    digitalWrite(LED_FAULT, HIGH);
+    delay(500);
+    digitalWrite(LED_ACTIVITY, LOW);
+    digitalWrite(LED_HEARTBEAT, LOW);
+    digitalWrite(LED_FAULT, LOW);
+    delay(500);
+  }
+}
+
+void increasePwmLL(void) {
+#ifdef __DEBUG__
+  Serial.println("increasePwmLL");
+#endif
+  if(pwmLL < 255)
+    pwmLL++;
+}
+
+void decreasePwmLL(void) {
+#ifdef __DEBUG__
+  Serial.println("decreasePwmLL");
+#endif
+  if(pwmLL > 0)
+    pwmLL--;
+}
+
+void increasePwmLR(void) {
+#ifdef __DEBUG__
+  Serial.println("increasePwmLR");
+#endif
+  if(pwmLR < 255)
+    pwmLR++;
+}
+
+void decreasePwmLR(void) {
+#ifdef __DEBUG__
+  Serial.println("decreasePwmLR");
+#endif
+  if(pwmLR > 0)
+    pwmLR--;
+}
+
+void increasePwmRL(void) {
+#ifdef __DEBUG__
+  Serial.println("increasePwmRL");
+#endif
+  if(pwmRL < 255)
+    pwmRL++;
+}
+
+void decreasePwmRL(void) {
+#ifdef __DEBUG__
+  Serial.println("decreasePwmRL");
+#endif
+  if(pwmRL > 0)
+    pwmRL--;
+}
+
+void increasePwmRR(void) {
+#ifdef __DEBUG__
+  Serial.println("increasePwmRR");
+#endif
+  if(pwmRR < 255)
+    pwmRR++;
+}
+
+void decreasePwmRR(void) {
+#ifdef __DEBUG__
+  Serial.println("decreasePwmRR");
+#endif
+  if(pwmRR > 0)
+    pwmRR--;
+}
+
+void increasePwmVL(void) {
+#ifdef __DEBUG__
+  Serial.println("increasePwmVL");
+#endif
+  if(pwmVL < 255)
+    pwmVL++;
+}
+
+void decreasePwmVL(void) {
+#ifdef __DEBUG__
+  Serial.println("decreasePwmVL");
+#endif
+  if(pwmVL > 0)
+    pwmVL--;
+}
+
+void increasePwmVR(void) {
+#ifdef __DEBUG__
+  Serial.println("increasePwmVR");
+#endif
+  if(pwmVR < 255)
+    pwmVR++;
+}
+
+void decreasePwmVR(void) {
+#ifdef __DEBUG__
+  Serial.println("decreasePwmVR");
+#endif
+  if(pwmVR > 0)
+    pwmVR--;
+}
+
+void saveConfig(void) {
+#ifdef __DEBUG__
+  Serial.println("saveConfig");
+#endif
+  EEPROM.write(PWM_L_L_ADDR, pwmLL);
+  EEPROM.write(PWM_L_R_ADDR, pwmLR);
+  EEPROM.write(PWM_R_L_ADDR, pwmRL);
+  EEPROM.write(PWM_R_R_ADDR, pwmRR);
+  EEPROM.write(PWM_V_L_ADDR, pwmVL);
+  EEPROM.write(PWM_V_R_ADDR, pwmVR);
 }

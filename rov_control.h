@@ -2,6 +2,7 @@
 
 #ifndef __ROV_CONTROL.H_DEFINED__
 
+#include <EEPROM.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
@@ -22,6 +23,14 @@
 #define LED_HEARTBEAT             4
 #define LED_ACTIVITY              3
 #define LED_FAULT                 5
+#define EEPROM_CLEAR              53
+
+#define PWM_L_L_ADDR              0
+#define PWM_L_R_ADDR              1
+#define PWM_R_L_ADDR              2
+#define PWM_R_R_ADDR              3
+#define PWM_V_L_ADDR              4
+#define PWM_V_R_ADDR              5
 
 #define PWM_L_L                   128
 #define PWM_L_R                   128
@@ -35,6 +44,15 @@ sensors_event_t a, g, temp;
 ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
 bool hbState;
 bool lightState;
+/* Yes, I know this will get overwritten on normal start
+ *  but I want to be sure
+ */
+int pwmLL = PWM_L_L;
+int pwmLR = PWM_L_R;
+int pwmRL = PWM_R_L;
+int pwmRR = PWM_R_R;
+int pwmVL = PWM_V_L;
+int pwmVR = PWM_V_R;
 
 void motorStop(void);
 void moveForward(void);
@@ -46,6 +64,22 @@ void moveDown(void);
 
 void getCommand(void);
 void sendLogData(void);
+
+void wipeEeprom(void);
+void saveConfig(void);
+
+void increasePwmLL(void);
+void decreasePwmLL(void);
+void increasePwmLR(void);
+void decreasePwmLR(void);
+void increasePwmRL(void);
+void decreasePwmRL(void);
+void increasePwmRR(void);
+void decreasePwmRR(void);
+void increasePwmVL(void);
+void decreasePwmVL(void);
+void increasePwmVR(void);
+void decreasePwmVR(void);
 
 float getVolts();
 float getCurrent();
