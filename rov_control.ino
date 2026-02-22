@@ -203,6 +203,9 @@ void sendLogData(void) {
     dataBlock += "on";
   else
     dataBlock += "off";
+  dataBlock += ",\r\n";
+  dataBlock += "\"pressure\": ";
+  dataBlock += (String)getPressure();
   dataBlock += "}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
@@ -529,4 +532,12 @@ void saveConfig(void) {
   EEPROM.write(PWM_R_R_ADDR, pwmRR);
   EEPROM.write(PWM_V_L_ADDR, pwmVL);
   EEPROM.write(PWM_V_R_ADDR, pwmVR);
+}
+
+float getPressure(void) {
+#ifdef __DEBUG__
+  Serial.println("getPressure");
+#endif
+  int pressure = analogRead(PRESSURE_PORT);
+  return (float)pressure;
 }
