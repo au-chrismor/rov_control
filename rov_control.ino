@@ -200,9 +200,9 @@ void sendLogData(void) {
   dataBlock += ",\r\n";
   dataBlock += "\"light\": ";
   if(lightState == HIGH)
-    dataBlock += "on";
+    dataBlock += "\"on\"";
   else
-    dataBlock += "off";
+    dataBlock += "\"off\"";
   dataBlock += ",\r\n";
   dataBlock += "\"pressure\": ";
   dataBlock += (String)getPressure();
