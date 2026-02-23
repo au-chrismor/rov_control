@@ -11,7 +11,7 @@
 #define V_BATT_PORT               A0
 #define I_BATT_PORT               A1
 #define PRESSURE_PORT             A2
-#define MOISTURE_SENSE_PORT       A5
+#define MOISTURE_SENSE_PORT       A3
 #define THRUST_L_PWM_L            6
 #define THRUST_L_PWM_R            12
 #define THRUST_R_PWM_L            11
@@ -92,6 +92,7 @@ float getIMUGyrolX(void);
 float getIMUGyrolY(void);
 float getIMUGyrolZ(void);
 float getPressure(void);
+int getMoisture(void);
 
 #define __ROV_CONTROL.H_DEFINED__ 1
 #endif

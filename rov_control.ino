@@ -206,6 +206,9 @@ void sendLogData(void) {
   dataBlock += ",\r\n";
   dataBlock += "\"pressure\": ";
   dataBlock += (String)getPressure();
+  dataBlock += ",\r\n";
+  dataBlock += "\"moisture\": ";
+  dataBlock += (String)getMoisture();
   dataBlock += "}\r\n}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
@@ -540,4 +543,16 @@ float getPressure(void) {
 #endif
   int pressure = analogRead(PRESSURE_PORT);
   return (float)pressure;
+}
+
+int getMoisture(void) {
+#ifdef __DEBUG__
+  Serial.println("getMoisture");  
+#endif
+  int value = 0;
+  digitalWrite(MOISTURE_POWER, HIGH);
+  delay(50);  /* Allow time to stabilse */
+  value = analogRead(MOISTURE_SENSE_PORT);
+  digitalWrite(MOISTURE_POWER, LOW);
+  return value;
 }
