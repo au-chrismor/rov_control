@@ -330,9 +330,10 @@ void lightOff(void) {
 
 float getVolts(void) {
 #ifdef __DEBUGDEBUG__
-  Serial.println("getVolts");
+  Serial.println("getVolts"); 
 #endif
-  return (float)(analogRead(V_BATT_PORT) * 12/1024);
+  float vIn = analogRead(V_BATT_PORT) * 5/1024;
+  return (float) ((vIn * BATT_R2) / (BATT_R1 + BATT_R2));
 }
 
 float getCurrent(void) {
