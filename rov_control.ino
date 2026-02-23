@@ -170,7 +170,7 @@ void sendLogData(void) {
   Serial.println("sendLogData");
 #endif
   getIMU();
-  String dataBlock = "{";
+  String dataBlock = "{\"log\": {";
   dataBlock += "\"volts\": ";
   dataBlock += (String)getVolts();
   dataBlock += ",\r\n";
@@ -206,7 +206,7 @@ void sendLogData(void) {
   dataBlock += ",\r\n";
   dataBlock += "\"pressure\": ";
   dataBlock += (String)getPressure();
-  dataBlock += "}";
+  dataBlock += "}\r\n}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
 #endif
