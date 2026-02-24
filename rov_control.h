@@ -73,6 +73,7 @@ void sendLogData(void);
 
 void wipeEeprom(void);
 void saveConfig(void);
+void cmdResult(String res);
 
 void increasePwmLL(void);
 void decreasePwmLL(void);

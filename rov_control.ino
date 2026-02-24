@@ -78,10 +78,10 @@ void loop() {
   if(Serial1.available() > 0) {
     getCommand();
   }
-  else {
+/*  else {
     sendLogData();
     delay(700);
-  }
+  } */
   heartBeat();
 }
 
@@ -157,6 +157,12 @@ void getCommand(void) {
   else if(cmd == "SAVE") {
     saveConfig();
   }
+  else if(cmd == "LOG") {
+    sendLogData();
+  }
+  else {
+      cmdResult("ERROR");
+  }
   digitalWrite(LED_ACTIVITY, LOW);
 }
 
@@ -230,6 +236,13 @@ void heartBeat(void) {
   digitalWrite(LED_HEARTBEAT, hbState);
 }
 
+void cmdResult(String res) {
+  String dataBlock = "{\"result\": \"";
+  dataBlock += res;
+  dataBlock += "\"}";
+  Serial1.println(dataBlock);
+}
+
 /* Stop all motors by setting speed to ZERO */
 void motorStop(void) {
 #ifdef __DEBUG__
@@ -241,6 +254,7 @@ void motorStop(void) {
   analogWrite(THRUST_R_PWM_R, 0);
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, 0);
+  cmdResult("OK");
 }
 
 /* Horizontal Stop Both horizontal thrusters STOP, Vertical unchanged */
@@ -252,6 +266,7 @@ void hStop(void) {
   analogWrite(THRUST_L_PWM_R, 0);
   analogWrite(THRUST_R_PWM_L, 0);
   analogWrite(THRUST_R_PWM_R, 0);
+  cmdResult("OK");
 }
 
 /* Vertical Stop Vertical STOP, Horizontal unchanged */
@@ -261,6 +276,7 @@ void vStop(void) {
 #endif
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, 0);
+  cmdResult("OK");
 }
 
 /* Move Forward: Both horizontal thrusters FWD, Vertical unchanged */
@@ -272,6 +288,7 @@ void moveForward(void) {
   analogWrite(THRUST_L_PWM_R, pwmLR);
   analogWrite(THRUST_R_PWM_L, 0);
   analogWrite(THRUST_R_PWM_R, pwmRR);
+  cmdResult("OK");
 }
 
 /* Move Backwards: Both horizontal thrusters REV, Vertical unchanged */
@@ -283,6 +300,7 @@ void moveReverse(void) {
   analogWrite(THRUST_L_PWM_R, 0);
   analogWrite(THRUST_R_PWM_L, pwmRL);
   analogWrite(THRUST_R_PWM_R, 0);
+  cmdResult("OK");
 }
 
 /* Move Left: Right Horizontal FWD, Left Horizontal REV, Vertical unchanged */
@@ -294,6 +312,7 @@ void moveLeft(void) {
   analogWrite(THRUST_L_PWM_R, 0);
   analogWrite(THRUST_R_PWM_L, 0);
   analogWrite(THRUST_R_PWM_R, pwmRR);
+  cmdResult("OK");
 }
 
 /* Move Right: Right Horizontal REV, Left Horizontal FWD, Vertical unchanged */
@@ -305,6 +324,7 @@ void moveRight(void) {
   analogWrite(THRUST_L_PWM_R, pwmLR);
   analogWrite(THRUST_R_PWM_L, pwmRL);
   analogWrite(THRUST_R_PWM_R, 0);
+  cmdResult("OK");
 }
 
 /* Move Up: Vertical FWD, Horizontal unchanged */
@@ -314,6 +334,7 @@ void moveUp(void) {
 #endif
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, pwmVR);
+  cmdResult("OK");
 }
 
 /* Move Down: Vertical REV, Horizontal unchanged */
@@ -323,6 +344,7 @@ void moveDown(void) {
 #endif
   analogWrite(THRUST_V_PWM_L, pwmVL);
   analogWrite(THRUST_V_PWM_R, 0);
+  cmdResult("OK");
 }
 
 void lightOn(void) {
@@ -331,6 +353,7 @@ void lightOn(void) {
 #endif
   lightState = HIGH;
   digitalWrite(LIGHT_POWER, lightState);
+  cmdResult("OK");
 }
 
 void lightOff(void) {
@@ -339,6 +362,7 @@ void lightOff(void) {
 #endif
   lightState = LOW;
   digitalWrite(LIGHT_POWER, lightState);
+  cmdResult("OK");
 }
 
 float getVolts(void) {
@@ -449,6 +473,7 @@ void increasePwmLL(void) {
 #endif
   if(pwmLL < 255)
     pwmLL++;
+  cmdResult("OK");
 }
 
 void decreasePwmLL(void) {
@@ -457,6 +482,7 @@ void decreasePwmLL(void) {
 #endif
   if(pwmLL > 0)
     pwmLL--;
+  cmdResult("OK");
 }
 
 void increasePwmLR(void) {
@@ -465,6 +491,7 @@ void increasePwmLR(void) {
 #endif
   if(pwmLR < 255)
     pwmLR++;
+  cmdResult("OK");
 }
 
 void decreasePwmLR(void) {
@@ -473,6 +500,7 @@ void decreasePwmLR(void) {
 #endif
   if(pwmLR > 0)
     pwmLR--;
+  cmdResult("OK");
 }
 
 void increasePwmRL(void) {
@@ -481,6 +509,7 @@ void increasePwmRL(void) {
 #endif
   if(pwmRL < 255)
     pwmRL++;
+  cmdResult("OK");
 }
 
 void decreasePwmRL(void) {
@@ -489,6 +518,7 @@ void decreasePwmRL(void) {
 #endif
   if(pwmRL > 0)
     pwmRL--;
+  cmdResult("OK");
 }
 
 void increasePwmRR(void) {
@@ -497,6 +527,7 @@ void increasePwmRR(void) {
 #endif
   if(pwmRR < 255)
     pwmRR++;
+  cmdResult("OK");
 }
 
 void decreasePwmRR(void) {
@@ -505,6 +536,7 @@ void decreasePwmRR(void) {
 #endif
   if(pwmRR > 0)
     pwmRR--;
+  cmdResult("OK");
 }
 
 void increasePwmVL(void) {
@@ -513,6 +545,7 @@ void increasePwmVL(void) {
 #endif
   if(pwmVL < 255)
     pwmVL++;
+  cmdResult("OK");
 }
 
 void decreasePwmVL(void) {
@@ -521,6 +554,7 @@ void decreasePwmVL(void) {
 #endif
   if(pwmVL > 0)
     pwmVL--;
+  cmdResult("OK");
 }
 
 void increasePwmVR(void) {
@@ -529,6 +563,7 @@ void increasePwmVR(void) {
 #endif
   if(pwmVR < 255)
     pwmVR++;
+  cmdResult("OK");
 }
 
 void decreasePwmVR(void) {
@@ -537,6 +572,7 @@ void decreasePwmVR(void) {
 #endif
   if(pwmVR > 0)
     pwmVR--;
+  cmdResult("OK");
 }
 
 void saveConfig(void) {
