@@ -94,7 +94,7 @@ float getIMUAccelz(void);
 float getIMUGyrolX(void);
 float getIMUGyrolY(void);
 float getIMUGyrolZ(void);
-float getPressure(void);
+int getPressure(void);
 int getMoisture(void);
 
 #define __ROV_CONTROL.H_DEFINED__ 1

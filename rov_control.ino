@@ -538,12 +538,11 @@ void saveConfig(void) {
   EEPROM.write(PWM_V_R_ADDR, pwmVR);
 }
 
-float getPressure(void) {
+int getPressure(void) {
 #ifdef __DEBUG__
   Serial.println("getPressure");
 #endif
-  int pressure = analogRead(PRESSURE_PORT);
-  return (float)pressure;
+  return analogRead(PRESSURE_PORT);
 }
 
 int getMoisture(void) {
