@@ -24,6 +24,7 @@
 #define LED_ACTIVITY              3
 #define LED_FAULT                 5
 #define EEPROM_CLEAR              53
+#define WDOG_PIN                  52
 
 #define PWM_L_L_ADDR              0
 #define PWM_L_R_ADDR              1
@@ -65,11 +66,14 @@ void moveRight(void);
 void moveUp(void);
 void moveDown(void);
 
+void heartBeat(void);
+
 void getCommand(void);
 void sendLogData(void);
 
 void wipeEeprom(void);
 void saveConfig(void);
+void cmdResult(String res);
 
 void increasePwmLL(void);
 void decreasePwmLL(void);
@@ -94,7 +98,7 @@ float getIMUAccelz(void);
 float getIMUGyrolX(void);
 float getIMUGyrolY(void);
 float getIMUGyrolZ(void);
-float getPressure(void);
+int getPressure(void);
 int getMoisture(void);
 
 #define __ROV_CONTROL.H_DEFINED__ 1
