@@ -75,18 +75,14 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(LED_HEARTBEAT, hbState);
-
   if(Serial1.available() > 0) {
     getCommand();
   }
   else {
     sendLogData();
-    delay(1000);
+    delay(700);
   }
-
-  hbState = !hbState;
-  digitalWrite(LED_HEARTBEAT, hbState);
+  heartBeat();
 }
 
 void getCommand(void) {
@@ -215,6 +211,23 @@ void sendLogData(void) {
 #endif
   Serial1.println(dataBlock);
   digitalWrite(LED_ACTIVITY, LOW);
+}
+
+void heartBeat(void) {
+#ifdef __DEBUG__
+  Serial.println("heartBeat");
+#endif
+  digitalWrite(LED_HEARTBEAT, hbState);
+
+  // Sink current to drain C2
+  pinMode(WDOG_PIN, OUTPUT);
+  digitalWrite(WDOG_PIN, LOW);
+  delay(250);
+  // Set pin back to High Impedance
+  pinMode(WDOG_PIN, INPUT);
+
+  hbState = !hbState;
+  digitalWrite(LED_HEARTBEAT, hbState);
 }
 
 /* Stop all motors by setting speed to ZERO */
