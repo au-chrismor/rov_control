@@ -206,6 +206,9 @@ void sendLogData(void) {
   dataBlock += ",\r\n";
   dataBlock += "\"pressure\": ";
   dataBlock += (String)getPressure();
+  dataBlock += ",\r\n";
+  dataBlock += "\"moisture\": ";
+  dataBlock += (String)getMoisture();
   dataBlock += "}\r\n}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
@@ -327,9 +330,10 @@ void lightOff(void) {
 
 float getVolts(void) {
 #ifdef __DEBUGDEBUG__
-  Serial.println("getVolts");
+  Serial.println("getVolts"); 
 #endif
-  return (float)(analogRead(V_BATT_PORT) * 12/1024);
+  float vIn = analogRead(V_BATT_PORT) * 5/1024;
+  return (float) ((vIn * (BATT_R1 + BATT_R2)) / BATT_R2);
 }
 
 float getCurrent(void) {
@@ -540,4 +544,16 @@ float getPressure(void) {
 #endif
   int pressure = analogRead(PRESSURE_PORT);
   return (float)pressure;
+}
+
+int getMoisture(void) {
+#ifdef __DEBUG__
+  Serial.println("getMoisture");  
+#endif
+  int value = 0;
+  digitalWrite(MOISTURE_POWER, HIGH);
+  delay(50);  /* Allow time to stabilse */
+  value = analogRead(MOISTURE_SENSE_PORT);
+  digitalWrite(MOISTURE_POWER, LOW);
+  return value;
 }
