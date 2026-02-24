@@ -39,7 +39,7 @@
 #define PWM_V_L                   128
 #define PWM_V_R                   128
 
-#define BATT_R1                    9100
+#define BATT_R1                   9100
 #define BATT_R2                   5100
 
 Adafruit_MPU6050 mpu;
