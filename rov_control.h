@@ -43,6 +43,10 @@
 #define BATT_R1                   9100
 #define BATT_R2                   5100
 
+#define MOTOR_STATE_OFF           0
+#define MOTOR_STATE_FWD           1
+#define MOTOR_STATE_REV           2
+
 Adafruit_MPU6050 mpu;
 sensors_event_t a, g, temp;
 ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
@@ -57,6 +61,9 @@ int pwmRL = PWM_R_L;
 int pwmRR = PWM_R_R;
 int pwmVL = PWM_V_L;
 int pwmVR = PWM_V_R;
+int motorLeftState = MOTOR_STATE_OFF;
+int motorRightState = MOTOR_STATE_OFF;
+int motorVertState = MOTOR_STATE_OFF;
 
 void motorStop(void);
 void moveForward(void);

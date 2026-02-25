@@ -100,6 +100,12 @@ void getCommand(void) {
   else if(cmd == "REV") {
     moveReverse(); 
   }
+  else if(cmd == "LEFT") {
+    moveLeft();
+  }
+  else if(cmd == "RIGHT") {
+    moveRight();
+  }
   else if(cmd == "HSTOP") {
     hStop();
   }
@@ -211,6 +217,15 @@ void sendLogData(void) {
   dataBlock += ",\r\n";
   dataBlock += "\"moisture\": ";
   dataBlock += (String)getMoisture();
+  dataBlock += ",\r\n";
+  dataBlock += "\"motor_l\": ";
+  dataBlock += (String)motorLeftState;
+  dataBlock += ",\r\n";
+  dataBlock += "\"motor_r\": ";
+  dataBlock += (String)motorRightState;
+  dataBlock += ",\r\n";
+  dataBlock += "\"motor_v\": ";
+  dataBlock += (String)motorVertState;
   dataBlock += "}\r\n}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
@@ -254,6 +269,11 @@ void motorStop(void) {
   analogWrite(THRUST_R_PWM_R, 0);
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, 0);
+  
+  motorLeftState = MOTOR_STATE_OFF;
+  motorRightState = MOTOR_STATE_OFF;
+  motorVertState = MOTOR_STATE_OFF;
+ 
   cmdResult("OK");
 }
 
@@ -266,6 +286,10 @@ void hStop(void) {
   analogWrite(THRUST_L_PWM_R, 0);
   analogWrite(THRUST_R_PWM_L, 0);
   analogWrite(THRUST_R_PWM_R, 0);
+  
+  motorLeftState = MOTOR_STATE_OFF;
+  motorRightState = MOTOR_STATE_OFF;
+
   cmdResult("OK");
 }
 
@@ -276,6 +300,9 @@ void vStop(void) {
 #endif
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, 0);
+  
+  motorVertState = MOTOR_STATE_OFF;
+ 
   cmdResult("OK");
 }
 
@@ -288,6 +315,10 @@ void moveForward(void) {
   analogWrite(THRUST_L_PWM_R, pwmLR);
   analogWrite(THRUST_R_PWM_L, 0);
   analogWrite(THRUST_R_PWM_R, pwmRR);
+  
+  motorLeftState = MOTOR_STATE_FWD;
+  motorRightState = MOTOR_STATE_FWD;
+ 
   cmdResult("OK");
 }
 
@@ -300,6 +331,10 @@ void moveReverse(void) {
   analogWrite(THRUST_L_PWM_R, 0);
   analogWrite(THRUST_R_PWM_L, pwmRL);
   analogWrite(THRUST_R_PWM_R, 0);
+  
+  motorLeftState = MOTOR_STATE_REV;
+  motorRightState = MOTOR_STATE_REV;
+ 
   cmdResult("OK");
 }
 
@@ -312,18 +347,26 @@ void moveLeft(void) {
   analogWrite(THRUST_L_PWM_R, 0);
   analogWrite(THRUST_R_PWM_L, 0);
   analogWrite(THRUST_R_PWM_R, pwmRR);
+  
+  motorLeftState = MOTOR_STATE_REV;
+  motorRightState = MOTOR_STATE_FWD;
+ 
   cmdResult("OK");
 }
 
 /* Move Right: Right Horizontal REV, Left Horizontal FWD, Vertical unchanged */
 void moveRight(void) {
 #ifdef __DEBUG__
-  Serial.println("moveLeft");
+  Serial.println("moveRight");
 #endif
   analogWrite(THRUST_L_PWM_L, 0);
   analogWrite(THRUST_L_PWM_R, pwmLR);
   analogWrite(THRUST_R_PWM_L, pwmRL);
   analogWrite(THRUST_R_PWM_R, 0);
+  
+  motorLeftState = MOTOR_STATE_FWD;
+  motorRightState = MOTOR_STATE_REV;
+ 
   cmdResult("OK");
 }
 
@@ -334,6 +377,9 @@ void moveUp(void) {
 #endif
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, pwmVR);
+  
+  motorVertState = MOTOR_STATE_FWD;
+ 
   cmdResult("OK");
 }
 
@@ -344,6 +390,9 @@ void moveDown(void) {
 #endif
   analogWrite(THRUST_V_PWM_L, pwmVL);
   analogWrite(THRUST_V_PWM_R, 0);
+  
+  motorVertState = MOTOR_STATE_REV;
+ 
   cmdResult("OK");
 }
 
