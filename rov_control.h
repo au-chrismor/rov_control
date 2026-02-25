@@ -3,8 +3,9 @@
 #ifndef __ROV_CONTROL.H_DEFINED__
 
 #include <EEPROM.h>
-#include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_HMC5883_U.h>
 #include <Wire.h>
 #include <ACS712.h>
 
@@ -43,7 +44,12 @@
 #define BATT_R1                   9100
 #define BATT_R2                   5100
 
+#define MOTOR_STATE_OFF           0
+#define MOTOR_STATE_FWD           1
+#define MOTOR_STATE_REV           2
+
 Adafruit_MPU6050 mpu;
+Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 sensors_event_t a, g, temp;
 ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
 bool hbState;
@@ -57,7 +63,15 @@ int pwmRL = PWM_R_L;
 int pwmRR = PWM_R_R;
 int pwmVL = PWM_V_L;
 int pwmVR = PWM_V_R;
+int motorLeftState = MOTOR_STATE_OFF;
+int motorRightState = MOTOR_STATE_OFF;
+int motorVertState = MOTOR_STATE_OFF;
 
+void leftStop(void);
+void rightStop(void);
+void vertStop(void);
+void leftForward(void);
+void rightForward(void);
 void motorStop(void);
 void moveForward(void);
 void moveReverse(void);
