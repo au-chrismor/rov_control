@@ -3,8 +3,9 @@
 #ifndef __ROV_CONTROL.H_DEFINED__
 
 #include <EEPROM.h>
-#include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_HMC5883_U.h>
 #include <Wire.h>
 #include <ACS712.h>
 
@@ -48,6 +49,7 @@
 #define MOTOR_STATE_REV           2
 
 Adafruit_MPU6050 mpu;
+Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 sensors_event_t a, g, temp;
 ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
 bool hbState;
