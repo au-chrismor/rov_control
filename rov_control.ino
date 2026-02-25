@@ -185,6 +185,15 @@ void sendLogData(void) {
   dataBlock += "\"amps\": ";
   dataBlock += (String)(getCurrent()/1000);
   dataBlock += ",\r\n";
+  dataBlock += "\"motor_l\": ";
+  dataBlock += (String)motorLeftState;
+  dataBlock += ",\r\n";
+  dataBlock += "\"motor_r\": ";
+  dataBlock += (String)motorRightState;
+  dataBlock += ",\r\n";
+  dataBlock += "\"motor_v\": ";
+  dataBlock += (String)motorVertState;
+  dataBlock += ",\r\n";
   dataBlock += "\"temperature\": ";
   dataBlock += (String)getIMUTemp();
   dataBlock += ",\r\n";
@@ -206,6 +215,18 @@ void sendLogData(void) {
   dataBlock += "\"gyro_z\": ";
   dataBlock += (String)getIMUGyroZ();
   dataBlock += ",\r\n";
+  dataBlock += "\"mag_x\": ";
+  dataBlock += (String)getCompassX();
+  dataBlock += ",\r\n";
+  dataBlock += "\"mag_y\": ";
+  dataBlock += (String)getCompassY();
+  dataBlock += ",\r\n";
+  dataBlock += "\"mag_z\": ";
+  dataBlock += (String)getCompassZ();
+  dataBlock += ",\r\n";
+  dataBlock += "\"heading\": ";
+  dataBlock += (String)getHeading();
+  dataBlock += ",\r\n";
   dataBlock += "\"light\": ";
   if(lightState == HIGH)
     dataBlock += "\"on\"";
@@ -217,15 +238,6 @@ void sendLogData(void) {
   dataBlock += ",\r\n";
   dataBlock += "\"moisture\": ";
   dataBlock += (String)getMoisture();
-  dataBlock += ",\r\n";
-  dataBlock += "\"motor_l\": ";
-  dataBlock += (String)motorLeftState;
-  dataBlock += ",\r\n";
-  dataBlock += "\"motor_r\": ";
-  dataBlock += (String)motorRightState;
-  dataBlock += ",\r\n";
-  dataBlock += "\"motor_v\": ";
-  dataBlock += (String)motorVertState;
   dataBlock += "}\r\n}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
@@ -546,6 +558,33 @@ float getIMUGyroZ(void) {
   Serial.println("getIMUGyroX");
 #endif
   return g.gyro.z;
+}
+
+void getCompass(void) {
+  mag.getEvent(&compass);
+}
+
+float getCompassX(void) {
+  return compass.magnetic.x;
+}
+
+float getCompassY(void) {
+  return compass.magnetic.y;
+}
+
+float getCompassZ(void) {
+  return compass.magnetic.z;
+}
+
+float getHeading(void) {
+  heading = atan2(compass.magnetic.y, compass.magnetic.x) + declination;
+  if(heading < 0)
+    heading += 2*PI;
+  else if(heading > 2*PI) {
+    heading -= 2*PI;
+  }
+  /* Convert to degrees */
+  return (heading * (float)180/M_PI);
 }
 
 /* Erase and default EEPROM contents */
