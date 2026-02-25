@@ -67,6 +67,11 @@ int motorLeftState = MOTOR_STATE_OFF;
 int motorRightState = MOTOR_STATE_OFF;
 int motorVertState = MOTOR_STATE_OFF;
 
+void leftStop(void);
+void rightStop(void);
+void vertStop(void);
+void leftForward(void);
+void rightForward(void);
 void motorStop(void);
 void moveForward(void);
 void moveReverse(void);
