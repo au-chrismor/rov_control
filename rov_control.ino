@@ -315,7 +315,7 @@ void rightForward(void) {
   }
   analogWrite(THRUST_R_PWM_L, 0);
   analogWrite(THRUST_R_PWM_R, pwmRR);
-  motorLeftState = MOTOR_STATE_FWD;
+  motorRightState = MOTOR_STATE_FWD;
 }
 
 void rightReverse(void) {
@@ -323,7 +323,7 @@ void rightReverse(void) {
   Serial.println("rightReverse");
 #endif
   if(motorRightState != MOTOR_STATE_REV) {
-    leftStop();
+    rightStop();
   }
   analogWrite(THRUST_R_PWM_L, pwmRL);
   analogWrite(THRUST_R_PWM_R, 0);
@@ -349,7 +349,7 @@ void vertForward(void) {
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, pwmVR);
   }
-  motorVertState = MOTOR_STATE_OFF;
+  motorVertState = MOTOR_STATE_FWD;
 }
 
 void vertReverse(void) {
@@ -360,7 +360,7 @@ void vertReverse(void) {
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, pwmVR);
   }
-  motorVertState = MOTOR_STATE_OFF;
+  motorVertState = MOTOR_STATE_FWD;
 }
 
 /* Stop all motors by setting speed to ZERO */
@@ -455,8 +455,7 @@ void moveDown(void) {
 #ifdef __DEBUG__
   Serial.println("moveDown");
 #endif
-  vertReverse();
-   
+  vertReverse(); 
   cmdResult("OK");
 }
 
