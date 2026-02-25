@@ -185,6 +185,15 @@ void sendLogData(void) {
   dataBlock += "\"amps\": ";
   dataBlock += (String)(getCurrent()/1000);
   dataBlock += ",\r\n";
+  dataBlock += "\"motor_l\": ";
+  dataBlock += (String)motorLeftState;
+  dataBlock += ",\r\n";
+  dataBlock += "\"motor_r\": ";
+  dataBlock += (String)motorRightState;
+  dataBlock += ",\r\n";
+  dataBlock += "\"motor_v\": ";
+  dataBlock += (String)motorVertState;
+  dataBlock += ",\r\n";
   dataBlock += "\"temperature\": ";
   dataBlock += (String)getIMUTemp();
   dataBlock += ",\r\n";
@@ -206,6 +215,18 @@ void sendLogData(void) {
   dataBlock += "\"gyro_z\": ";
   dataBlock += (String)getIMUGyroZ();
   dataBlock += ",\r\n";
+  dataBlock += "\"mag_x\": ";
+  dataBlock += (String)getCompassX();
+  dataBlock += ",\r\n";
+  dataBlock += "\"mag_y\": ";
+  dataBlock += (String)getCompassY();
+  dataBlock += ",\r\n";
+  dataBlock += "\"mag_z\": ";
+  dataBlock += (String)getCompassZ();
+  dataBlock += ",\r\n";
+  dataBlock += "\"heading\": ";
+  dataBlock += (String)getHeading();
+  dataBlock += ",\r\n";
   dataBlock += "\"light\": ";
   if(lightState == HIGH)
     dataBlock += "\"on\"";
@@ -217,15 +238,6 @@ void sendLogData(void) {
   dataBlock += ",\r\n";
   dataBlock += "\"moisture\": ";
   dataBlock += (String)getMoisture();
-  dataBlock += ",\r\n";
-  dataBlock += "\"motor_l\": ";
-  dataBlock += (String)motorLeftState;
-  dataBlock += ",\r\n";
-  dataBlock += "\"motor_r\": ";
-  dataBlock += (String)motorRightState;
-  dataBlock += ",\r\n";
-  dataBlock += "\"motor_v\": ";
-  dataBlock += (String)motorVertState;
   dataBlock += "}\r\n}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
@@ -315,7 +327,7 @@ void rightForward(void) {
   }
   analogWrite(THRUST_R_PWM_L, 0);
   analogWrite(THRUST_R_PWM_R, pwmRR);
-  motorLeftState = MOTOR_STATE_FWD;
+  motorRightState = MOTOR_STATE_FWD;
 }
 
 void rightReverse(void) {
@@ -323,7 +335,7 @@ void rightReverse(void) {
   Serial.println("rightReverse");
 #endif
   if(motorRightState != MOTOR_STATE_REV) {
-    leftStop();
+    rightStop();
   }
   analogWrite(THRUST_R_PWM_L, pwmRL);
   analogWrite(THRUST_R_PWM_R, 0);
@@ -349,7 +361,7 @@ void vertForward(void) {
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, pwmVR);
   }
-  motorVertState = MOTOR_STATE_OFF;
+  motorVertState = MOTOR_STATE_FWD;
 }
 
 void vertReverse(void) {
@@ -360,7 +372,7 @@ void vertReverse(void) {
   analogWrite(THRUST_V_PWM_L, 0);
   analogWrite(THRUST_V_PWM_R, pwmVR);
   }
-  motorVertState = MOTOR_STATE_OFF;
+  motorVertState = MOTOR_STATE_FWD;
 }
 
 /* Stop all motors by setting speed to ZERO */
@@ -455,8 +467,7 @@ void moveDown(void) {
 #ifdef __DEBUG__
   Serial.println("moveDown");
 #endif
-  vertReverse();
-   
+  vertReverse(); 
   cmdResult("OK");
 }
 
@@ -547,6 +558,33 @@ float getIMUGyroZ(void) {
   Serial.println("getIMUGyroX");
 #endif
   return g.gyro.z;
+}
+
+void getCompass(void) {
+  mag.getEvent(&compass);
+}
+
+float getCompassX(void) {
+  return compass.magnetic.x;
+}
+
+float getCompassY(void) {
+  return compass.magnetic.y;
+}
+
+float getCompassZ(void) {
+  return compass.magnetic.z;
+}
+
+float getHeading(void) {
+  heading = atan2(compass.magnetic.y, compass.magnetic.x) + declination;
+  if(heading < 0)
+    heading += 2*PI;
+  else if(heading > 2*PI) {
+    heading -= 2*PI;
+  }
+  /* Convert to degrees */
+  return (heading * (float)180/M_PI);
 }
 
 /* Erase and default EEPROM contents */
