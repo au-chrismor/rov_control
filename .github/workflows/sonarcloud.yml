@@ -1,6 +1,7 @@
 name: SonarCloud
-on: [pull-request]
-    types: [opened, synchronize, reopened]
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
 jobs:
     sonarcloud:
         name: sonarcloud
@@ -14,4 +15,3 @@ jobs:
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-                
