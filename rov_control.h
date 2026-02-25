@@ -50,10 +50,13 @@
 
 Adafruit_MPU6050 mpu;
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
-sensors_event_t a, g, temp;
+sensors_event_t a, g, temp, compass;
 ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
 bool hbState;
 bool lightState;
+float declination = 0.227;
+float heading = 0.0;
+
 /* Yes, I know this will get overwritten on normal start
  *  but I want to be sure
  */
@@ -112,6 +115,11 @@ float getIMUAccelz(void);
 float getIMUGyrolX(void);
 float getIMUGyrolY(void);
 float getIMUGyrolZ(void);
+void getCompass(void);
+float getCompassX(void);
+float getCompassY(void);
+float getCompassZ(void);
+float getHeading(void);
 int getPressure(void);
 int getMoisture(void);
 
