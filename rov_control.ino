@@ -17,6 +17,7 @@ void setup() {
 
   hbState = HIGH;
   lightState = LOW;
+  alarmState = LOW;
   
   digitalWrite(LED_ACTIVITY, HIGH);
   digitalWrite(LED_HEARTBEAT, HIGH);
@@ -78,10 +79,6 @@ void loop() {
   if(Serial1.available() > 0) {
     getCommand();
   }
-/*  else {
-    sendLogData();
-    delay(700);
-  } */
   heartBeat();
 }
 
@@ -238,6 +235,16 @@ void sendLogData(void) {
   dataBlock += ",\r\n";
   dataBlock += "\"moisture\": ";
   dataBlock += (String)getMoisture();
+  dataBlock += ",\r\n";
+  dataBlock += "\"alarm\": ";
+  if(alarmState == HIGH) {
+    dataBlock += "\"true\"";
+    dataBlock += ",\r\n";
+    dataBlock += "\"alarm_data\": ";
+    dataBlock += (String)alarmData;
+  }
+  else
+    dataBlock += "\"false\"";
   dataBlock += "}\r\n}";
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
@@ -261,6 +268,27 @@ void heartBeat(void) {
 
   hbState = !hbState;
   digitalWrite(LED_HEARTBEAT, hbState);
+}
+
+bool checkAlarms(void) {
+  /* If there are NO alarms, check for any new problems */
+    if(getVolts() < BATT_ALARM_ON) {
+      alarmState = HIGH;
+      bitSet(alarmData, ALARM_BATTERY);
+    }
+    if(getMoisture() > MOISTURE_ALARM_ON) {
+      alarmState = HIGH;
+      bitSet(alarmData, ALARM_MOISTURE);
+    }
+
+    /* See if any can be cleared */
+    if(getVolts() > BATT_ALARM_OFF) {
+      bitClear(alarmData, ALARM_BATTERY);
+    }
+    if(alarmData == 0) {
+      alarmState = LOW;
+    }
+  return alarmState;
 }
 
 void cmdResult(String res) {

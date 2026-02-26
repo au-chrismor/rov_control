@@ -44,6 +44,14 @@
 #define BATT_R1                   9100
 #define BATT_R2                   5100
 
+#define BATT_ALARM_ON             10.1
+#define BATT_ALARM_OFF            10.6
+#define MOISTURE_ALARM_ON         128
+
+/* alarmState bits */
+#define ALARM_MOISTURE            0
+#define ALARM_BATTERY             1
+
 #define MOTOR_STATE_OFF           0
 #define MOTOR_STATE_FWD           1
 #define MOTOR_STATE_REV           2
@@ -54,6 +62,8 @@ sensors_event_t a, g, temp, compass;
 ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
 bool hbState;
 bool lightState;
+bool alarmState;
+int alarmData;
 float declination = 0.227;
 float heading = 0.0;
 
@@ -87,6 +97,7 @@ void heartBeat(void);
 
 void getCommand(void);
 void sendLogData(void);
+bool checkAlarms(void);
 
 void wipeEeprom(void);
 void saveConfig(void);
