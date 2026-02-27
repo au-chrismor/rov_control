@@ -14,3 +14,9 @@ Since now I have considerable processing capabilities on the ROV itself, I thoug
 - Resistive Pressure Sensor (Denso oil pressure sensor);
 - Divider network for battery voltage
 
+## Additional Components
+
+- Power Supply (12V to 5V)
+- RS485 transceiver
+
+The Electronics are intended to be mounted on a 400mm x 55mm "sled" which fits inside a 65mm DWV PVC tube.  All cables will pass through a potted end cap which is secured to the tube prior to final assembly.  The pipe is then filled with mineral oil before being sealed up.
