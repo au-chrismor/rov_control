@@ -191,8 +191,11 @@ void sendLogData(void) {
   dataBlock += "\"motor_v\": ";
   dataBlock += (String)motorVertState;
   dataBlock += ",\r\n";
-  dataBlock += "\"temperature\": ";
+  dataBlock += "\"temp_i\": ";
   dataBlock += (String)getIMUTemp();
+  dataBlock += ",\r\n";
+  dataBlock += "\"temp_o\": ";
+  dataBlock += (String)getWaterTemp();
   dataBlock += ",\r\n";
   dataBlock += "\"accel_x\": ";
   dataBlock += (String)getIMUAccelX();
@@ -783,4 +786,8 @@ int getMoisture(void) {
   value = analogRead(MOISTURE_SENSE_PORT);
   digitalWrite(MOISTURE_POWER, LOW);
   return value;
+}
+
+float getWaterTemp(void) {
+  return out_temp.read();
 }
