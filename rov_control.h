@@ -8,11 +8,13 @@
 #include <Adafruit_HMC5883_U.h>
 #include <Wire.h>
 #include <ACS712.h>
+#include <thermistor.h>
 
 #define V_BATT_PORT               A0
 #define I_BATT_PORT               A1
 #define PRESSURE_PORT             A2
 #define MOISTURE_SENSE_PORT       A3
+#define THERMISTOR_PORT           A4
 #define THRUST_L_PWM_L            6
 #define THRUST_L_PWM_R            12
 #define THRUST_R_PWM_L            11
@@ -56,10 +58,16 @@
 #define MOTOR_STATE_FWD           1
 #define MOTOR_STATE_REV           2
 
+#define NTC_RES                   10000
+#define NTC_BETA                  3950
+#define NTC_25C                   10000
+
 Adafruit_MPU6050 mpu;
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 sensors_event_t a, g, temp, compass;
 ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
+THERMISTOR out_temp(THERMISTOR_PORT, NTC_25C, NTC_BETA, NTC_RES);
+
 bool hbState;
 bool lightState;
 bool alarmState;
@@ -133,6 +141,7 @@ float getCompassZ(void);
 float getHeading(void);
 int getPressure(void);
 int getMoisture(void);
+float getWaterTemp(void);
 
 #define __ROV_CONTROL.H_DEFINED__ 1
 #endif

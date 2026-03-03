@@ -10,7 +10,8 @@ Log data is returned in response to a "LOG" command from the console.  The data 
         "motor_l": 0,
         "motor_r": 0,
         "motor_v": 0,
-        "temperature": 0.0,
+        "temp_i": 0.0,
+        "temp_o_": 0.0,
         "accel_x": 0.0,
         "accel_y": 0.0,
         "accel_z": 0.0,
@@ -125,9 +126,13 @@ Current operating state of the vertical motor:
 
 External pressure sensor ADC output.  Requires conversion to depth.
 
-### temperature
+### temp_i
 
 Current internal temperature.  Measured by IMU module.
+
+### temp_o
+
+Current outside temperature.  Measured by thermistor.
 
 ### volts
 
