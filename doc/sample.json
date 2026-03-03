@@ -1,1 +1,1 @@
-{"log": {"volts": 5.00, "amps": 0.00, "temperature": 24.23, "accel_x": -1.83, "accel_y": 0.84, "accel_z": 10.10, "gyro_x": -0.04, "gyro_y": 0.02, "gyro_z": -0.01, "light": "off", "pressure": 466.00}}
+{"log": {"volts": 0.0, "amps": 0.0, "motor_l": 0, "motor_r": 0, "motor_v": 0, "temp_i": 0.0, "temp_o_": 0.0, "accel_x": 0.0, "accel_y": 0.0, "accel_z": 0.0, "gyro_x": 0.0, "gyro_y": 0.0, "gyro_z": 0.0, "mag_x": 0.0, "mag_y": 0.0, "mag_z": 0.0, "heading": 0.0, "light": "off", "pressure": 0, "moisture": 0, "alarm": "true", "alarm_data": 2}}

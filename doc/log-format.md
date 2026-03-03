@@ -26,7 +26,7 @@ Log data is returned in response to a "LOG" command from the console.  The data 
         "pressure": 0,
         "moisture": 0,
         "alarm": "true",
-        "alarm_data", 2
+        "alarm_data": 2
     }
 }
 
