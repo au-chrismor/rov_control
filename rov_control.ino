@@ -58,6 +58,25 @@ void setup() {
     mpu.setGyroRange(MPU6050_RANGE_500_DEG);
     mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
   }
+
+#ifdef __DEBUG__
+  Serial.println("Compass Setup");
+#endif
+  if(!mag.begin())
+#ifdef __DEBUG__
+    Serial.println("HMC5883 FAILED!");
+#endif
+    digitalWrite(LED_ACTIVITY, LOW);
+    digitalWrite(LED_HEARTBEAT, LOW);
+    digitalWrite(LED_FAULT, HIGH);
+    while(1) {
+      delay(100);
+    }
+  }
+
+#ifdef __DEBUG__
+  Serial.println("ACS Setup");
+#endif
   acs.autoMidPoint();
 
 #ifdef __DEBUG__
