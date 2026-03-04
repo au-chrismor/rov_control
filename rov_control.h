@@ -2,46 +2,67 @@
 
 #ifndef __ROV_CONTROL.H_DEFINED__
 
-#include <EEPROM.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_MPU6050.h>
-#include <Adafruit_HMC5883_U.h>
-#include <Wire.h>
-#include <ACS712.h>
-#include <thermistor.h>
-
-#define V_BATT_PORT               A0
-#define I_BATT_PORT               A1
-#define PRESSURE_PORT             A2
-#define MOISTURE_SENSE_PORT       A3
-#define THERMISTOR_PORT           A4
-#define THRUST_L_PWM_L            6
-#define THRUST_L_PWM_R            12
-#define THRUST_R_PWM_L            11
-#define THRUST_R_PWM_R            10
-#define THRUST_V_PWM_L            7
-#define THRUST_V_PWM_R            8
-#define LIGHT_POWER               22
-#define MOISTURE_POWER            23
-#define LED_HEARTBEAT             4
-#define LED_ACTIVITY              3
-#define LED_FAULT                 5
-#define EEPROM_CLEAR              53
-#define WDOG_PIN                  52
-
-#define PWM_L_L_ADDR              0
-#define PWM_L_R_ADDR              1
-#define PWM_R_L_ADDR              2
-#define PWM_R_R_ADDR              3
-#define PWM_V_L_ADDR              4
-#define PWM_V_R_ADDR              5
-
-#define PWM_L_L                   128
-#define PWM_L_R                   128
-#define PWM_R_L                   128
-#define PWM_R_R                   128
-#define PWM_V_L                   128
-#define PWM_V_R                   128
+  #include <EEPROM.h>
+  #include <Adafruit_Sensor.h>
+  #include <Adafruit_MPU6050.h>
+  #include <Adafruit_HMC5883_U.h>
+  #include <Wire.h>
+  #include <ACS712.h>
+  #include <thermistor.h>
+  
+#ifdef ARDUINO_AVR_MEGA2560
+  #define V_BATT_PORT               A0
+  #define I_BATT_PORT               A1
+  #define PRESSURE_PORT             A2
+  #define MOISTURE_SENSE_PORT       A3
+  #define THERMISTOR_PORT           A4
+  #define THRUST_L_PWM_L            6
+  #define THRUST_L_PWM_R            12
+  #define THRUST_R_PWM_L            11
+  #define THRUST_R_PWM_R            10
+  #define THRUST_V_PWM_L            7
+  #define THRUST_V_PWM_R            8
+  #define LIGHT_POWER               22
+  #define MOISTURE_POWER            23
+  #define LED_HEARTBEAT             4
+  #define LED_ACTIVITY              3
+  #define LED_FAULT                 5
+  #define EEPROM_CLEAR              53
+  #define WDOG_PIN                  52
+#elif defined(ESP32)
+  #include <esp_task_wdt.h>
+  #define V_BATT_PORT               36
+  #define I_BATT_PORT               39
+  #define PRESSURE_PORT             32
+  #define MOISTURE_SENSE_PORT       33
+  #define THERMISTOR_PORT           34
+  #define THRUST_L_PWM_L            25
+  #define THRUST_L_PWM_R            26
+  #define THRUST_R_PWM_L            27
+  #define THRUST_R_PWM_R            14
+  #define THRUST_V_PWM_L            19
+  #define THRUST_V_PWM_R            18
+  #define LIGHT_POWER               23
+  #define MOISTURE_POWER            33
+  #define LED_HEARTBEAT             2
+  #define LED_ACTIVITY              15
+  #define LED_FAULT                 4
+  #define EEPROM_CLEAR              34
+#endif
+  
+  #define PWM_L_L_ADDR              0
+  #define PWM_L_R_ADDR              1
+  #define PWM_R_L_ADDR              2
+  #define PWM_R_R_ADDR              3
+  #define PWM_V_L_ADDR              4
+  #define PWM_V_R_ADDR              5
+  
+  #define PWM_L_L                   128
+  #define PWM_L_R                   128
+  #define PWM_R_L                   128
+  #define PWM_R_R                   128
+  #define PWM_V_L                   128
+  #define PWM_V_R                   128
 
 #define BATT_R1                   9100
 #define BATT_R2                   5100

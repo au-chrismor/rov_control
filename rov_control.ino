@@ -70,6 +70,19 @@ void setup() {
   pwmVL = EEPROM.read(PWM_V_L_ADDR);
   pwmVR = EEPROM.read(PWM_V_R_ADDR);
 
+#ifdef ESP32
+#ifdef __DEBUG__
+  Serial.println("Init Watchdog");
+#endif
+  esp_task_wdt_config_t twdt_config = {
+    .timeout_ms = 2000,
+    .idle_core_mask = (1 << 0),
+    .trigger_panic = true
+  };
+  esp_task_wdt_reconfigure(&twdt_config);
+  esp_task_wdt_add(NULL);
+#endif
+
   digitalWrite(LED_ACTIVITY, LOW);
   digitalWrite(LED_HEARTBEAT, LOW);
   digitalWrite(LED_FAULT, LOW);
@@ -260,6 +273,7 @@ void heartBeat(void) {
 #ifdef __DEBUG__
   Serial.println("heartBeat");
 #endif
+#ifdef ARDUINO_AVR_MEGA2560
   digitalWrite(LED_HEARTBEAT, hbState);
 
   // Sink current to drain C2
@@ -271,6 +285,10 @@ void heartBeat(void) {
 
   hbState = !hbState;
   digitalWrite(LED_HEARTBEAT, hbState);
+#endif
+#ifdef ESP32
+  esp_task_wdt_reset();
+#endif
 }
 
 bool checkAlarms(void) {
@@ -632,6 +650,9 @@ void wipeEeprom(void) {
   EEPROM.write(PWM_R_R_ADDR, PWM_R_R);
   EEPROM.write(PWM_V_L_ADDR, PWM_V_L);
   EEPROM.write(PWM_V_R_ADDR, PWM_V_R);
+#ifdef ESP32
+  EEPROM.commit();
+#endif  
 
 #ifdef __DEBUG__
   Serial.println("Remove link and reset!");
@@ -767,6 +788,9 @@ void saveConfig(void) {
   EEPROM.write(PWM_R_R_ADDR, pwmRR);
   EEPROM.write(PWM_V_L_ADDR, pwmVL);
   EEPROM.write(PWM_V_R_ADDR, pwmVR);
+#ifdef ESP32
+  EEPROM.commit();
+#endif  
 }
 
 int getPressure(void) {
