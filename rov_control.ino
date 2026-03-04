@@ -1,4 +1,6 @@
-/* Copyright (C) 2026 Christopher F. Moran */
+/* Copyright (C) 2026 Christopher F. Moran            */
+/* Portions Copyright (C) Adafruit Industries         */
+/* Portions Copyright (C) Honeywell Microelectronics  */
 
 #include "rov_control.h"
 
@@ -94,7 +96,7 @@ void setup() {
 
 #ifdef ESP32
 #ifdef __DEBUG__
-  Serial.println("Init Watchdog");
+  Serial.println("Watchdog Setup");
 #endif
   esp_task_wdt_config_t twdt_config = {
     .timeout_ms = 2000,
@@ -110,6 +112,8 @@ void setup() {
   digitalWrite(LED_FAULT, LOW);
 }
 
+/* To make sure that we reset the watchdog correctly  */
+/* we do as little as possible within loop()          */
 void loop() {
   if(Serial1.available() > 0) {
     getCommand();
@@ -117,6 +121,8 @@ void loop() {
   heartBeat();
 }
 
+/* Pull a command string from the RS-485 link and     */
+/* see if it contains a command                       */
 void getCommand(void) {
   String cmd;
   
@@ -204,6 +210,7 @@ void getCommand(void) {
   digitalWrite(LED_ACTIVITY, LOW);
 }
 
+/* Gather sensor information and send it over the link  */
 void sendLogData(void) {
   digitalWrite(LED_ACTIVITY, HIGH);
 #ifdef __DEBUG__
@@ -291,6 +298,9 @@ void sendLogData(void) {
   digitalWrite(LED_ACTIVITY, LOW);
 }
 
+/* Reset the Watchdog timer before it can reset the controller  */
+/* AVR based controllers need an external WDT, but ESP32 uses   */
+/* built-in timer.                                              */
 void heartBeat(void) {
 #ifdef __DEBUG__
   Serial.println("heartBeat");
@@ -313,6 +323,7 @@ void heartBeat(void) {
 #endif
 }
 
+/* This is a bit rubbish right now, and needs work!     */
 bool checkAlarms(void) {
   /* If there are NO alarms, check for any new problems */
     if(getVolts() < BATT_ALARM_ON) {
@@ -341,7 +352,7 @@ void cmdResult(String res) {
   Serial1.println(dataBlock);
 }
 
-/* Control Primatives */
+/* Motor Control Primitives     */
 
 void leftStop(void) {
 #ifdef __DEBUG__
@@ -658,7 +669,9 @@ float getHeading(void) {
   return (heading * (float)180/M_PI);
 }
 
-/* Erase and default EEPROM contents */
+/* Erase and default EEPROM contents                */
+/* ESP32 does some clever things with Flash Storage */
+/* but the library hides it from us.                */
 void wipeEeprom(void) {
 #ifdef __DEBUG__
   Serial.println("Default EEPROM");
