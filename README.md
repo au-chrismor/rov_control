@@ -10,13 +10,15 @@ Since now I have considerable processing capabilities on the ROV itself, I thoug
 
 - HMC5883 Compass;
 - MPU650 3-Axis Accelerometer;
-- ACS712 Current Sensor;
+- ACS712 Current Sensor (30Amp);
 - Resistive Pressure Sensor (Denso oil pressure sensor);
 - Divider network for battery voltage
 
 ## Additional Components
 
+- Arduino Mega 2560 or ESP32 WROOM
 - Power Supply (12V to 5V)
-- RS485 transceiver
+- RS485 transceiver (1)
+- BTS7960 Driver Modules (3)
 
 The Electronics are intended to be mounted on a 400mm x 55mm "sled" which fits inside a 65mm DWV PVC tube.  All cables will pass through a potted end cap which is secured to the tube prior to final assembly.  The pipe is then filled with mineral oil before being sealed up.
