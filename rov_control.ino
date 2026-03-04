@@ -62,7 +62,7 @@ void setup() {
 #ifdef __DEBUG__
   Serial.println("Compass Setup");
 #endif
-  if(!mag.begin())
+  if(!mag.begin()) {
 #ifdef __DEBUG__
     Serial.println("HMC5883 FAILED!");
 #endif
