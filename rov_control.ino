@@ -13,8 +13,11 @@ void setup() {
   pinMode(LED_HEARTBEAT, OUTPUT);
   pinMode(LED_ACTIVITY, OUTPUT);
   pinMode(LED_FAULT, OUTPUT);
+#ifdef ESP32
+  pinMode(EEPROM_CLEAR, INPUT);
+#elif defined ARDUINO_AVR_MEGA2560
   pinMode(EEPROM_CLEAR, INPUT_PULLUP);
-
+#endif
   hbState = HIGH;
   lightState = LOW;
   alarmState = LOW;
@@ -66,7 +69,7 @@ void setup() {
 #ifdef __DEBUG__
     Serial.println("HMC5883 FAILED!");
 #endif
-    digitalWrite(LED_ACTIVITY, LOW);
+    digitalWrite(LED_ACTIVITY, HIGH);
     digitalWrite(LED_HEARTBEAT, LOW);
     digitalWrite(LED_FAULT, HIGH);
     while(1) {
