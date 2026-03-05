@@ -118,7 +118,11 @@ void setup() {
 /* To make sure that we reset the watchdog correctly  */
 /* we do as little as possible within loop()          */
 void loop() {
+#ifdef ESP32
+  if(Serial2.available() > 0) {
+#elif defined ARDUINO_AVR_MEGA2560
   if(Serial1.available() > 0) {
+#endif
     getCommand();
   }
   heartBeat();
@@ -130,7 +134,11 @@ void getCommand(void) {
   String cmd;
   
   digitalWrite(LED_ACTIVITY, HIGH);
+#ifdef ESP32
+  cmd = Serial2.readString();
+#elif defined ARDUINO_AVR_MEGA2560
   cmd = Serial1.readString();
+#endif
   cmd.trim(); /* Remove whitespace at end */
   if(cmd == "STOP") {
     motorStop();
@@ -297,7 +305,11 @@ void sendLogData(void) {
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
 #endif
+#ifdef ESP32
+  Serial2.println(dataBlock);
+#elif defined ARDUINO_AVR_MEGA2560
   Serial1.println(dataBlock);
+#endif
   digitalWrite(LED_ACTIVITY, LOW);
 }
 
@@ -352,7 +364,11 @@ void cmdResult(String res) {
   String dataBlock = "{\"result\": \"";
   dataBlock += res;
   dataBlock += "\"}";
+#ifdef ESP32
+  Serial2.println(dataBlock);
+#elif defined ARDUINO_AVR_MEGA2560
   Serial1.println(dataBlock);
+#endif
 }
 
 /* Motor Control Primitives     */
