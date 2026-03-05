@@ -31,8 +31,11 @@ void setup() {
 #ifdef __DEBUG__
   Serial.println("Start RS485");
 #endif
+#ifdef ESP32
+  Serial2.begin(9600);
+#elif defined ARDUINO_AVR_MEGA2560
   Serial1.begin(9600);
-
+#endif
   motorStop();
 
   if(digitalRead(EEPROM_CLEAR) == LOW) {
