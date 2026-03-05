@@ -113,6 +113,9 @@ void setup() {
   digitalWrite(LED_ACTIVITY, LOW);
   digitalWrite(LED_HEARTBEAT, LOW);
   digitalWrite(LED_FAULT, LOW);
+#ifdef __DEBUG__
+  Serial.println("Setup complete!");
+#endif
 }
 
 /* To make sure that we reset the watchdog correctly  */
@@ -317,7 +320,7 @@ void sendLogData(void) {
 /* AVR based controllers need an external WDT, but ESP32 uses   */
 /* built-in timer.                                              */
 void heartBeat(void) {
-#ifdef __DEBUG__
+#ifdef __DEBUGDEBUG__
   Serial.println("heartBeat");
 #endif
 #ifdef ARDUINO_AVR_MEGA2560
