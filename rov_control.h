@@ -86,7 +86,12 @@
 Adafruit_MPU6050 mpu;
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 sensors_event_t a, g, temp, compass;
-ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
+#ifdef ESP32
+  ACS712  acs(I_BATT_PORT, 20.0, 4095, 100);
+#elif defined ARDUINO_AVR_MEGA2560
+  ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
+#endif
+
 THERMISTOR out_temp(THERMISTOR_PORT, NTC_25C, NTC_BETA, NTC_RES);
 
 bool hbState;
