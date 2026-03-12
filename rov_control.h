@@ -101,7 +101,7 @@ bool alarmState;
 int alarmData;
 float declination = 0.227;
 float heading = 0.0;
-int acs_offset = 0;
+float acs_offset = 0.0;
 
 /* Yes, I know this will get overwritten on normal start
  *  but I want to be sure

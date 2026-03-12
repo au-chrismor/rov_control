@@ -610,7 +610,7 @@ float getCurrent(void) {
 #ifdef __DEBUG__
   Serial.println("getCurrent");
 #endif
-  return acs.mA_DC();
+  return acs.mA_DC() - acs_offset;
 }
 
 void getIMU(void) {
@@ -880,10 +880,10 @@ float getWaterTemp(void) {
 
 void calibrateCurrentSensor(void) {
   int i = 0;
-  long sum = 0;
+  float sum = 0;
   for(int i = 0; i < ACS_CALIBRATION_COUNT; i++) {
-    sum += analogRead(I_BATT_PORT);
+    sum += acs.mA_DC();
     delay(ACS_CALIBRATION_DELAY);
   }
-  acs_offset = sum/ACS_CALIBRATION_COUNT;
+  acs_offset = sum/(float)ACS_CALIBRATION_COUNT;
 }
