@@ -37,6 +37,11 @@ void setup() {
   Serial1.begin(9600);
 #endif
   motorStop();
+  // We need to "zero" on the baseline current draw.
+  // This means everything EXCEPT the motors are powered on
+  //
+  Serial.println("Calibrate zero current");
+  calibrateCurrentSensor();
 
   if(digitalRead(EEPROM_CLEAR) == LOW) {
     wipeEeprom();
@@ -871,4 +876,14 @@ int getMoisture(void) {
 
 float getWaterTemp(void) {
   return out_temp.read();
+}
+
+void calibrateCurrentSensor(void) {
+  int i = 0;
+  long sum = 0;
+  for(int i = 0; i < ACS_CALIBRATION_COUNT; i++) {
+    sum += analogRead(I_BATT_PORT);
+    delay(ACS_CALIBRATION_DELAY);
+  }
+  acs_offset = sum/ACS_CALIBRATION_COUNT;
 }
