@@ -1,28 +1,21 @@
 /* Test calibration for pressure-based depth sensor */
 
-#include <thermistor.h>
-#include <SoftwareSerial.h>
+#include "rov_control.h"
 
-#define PRESSURE_PORT             A0
-#define THERMISTOR_PORT           A1
-#define RX_PIN                    2
-#define TX_PIN                    3
-#define LED_HEARTBEAT             LED_BUILTIN
-#define NTC_RES                   10000
-#define NTC_BETA                  3950
-#define NTC_25C                   10000
-
-THERMISTOR out_temp(THERMISTOR_PORT, NTC_25C, NTC_BETA, NTC_RES);
-SoftwareSerial rs485 = SoftwareSerial(RX_PIN, TX_PIN);
-
-bool hbState;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Serial Setup");
-  pinMode(TX_PIN, OUTPUT);
-  pinMode(RX_PIN, INPUT);
-  rs485.begin(9600);
+
+#ifdef __DEBUG__
+  Serial.println("Start RS485");
+#endif
+#ifdef ESP32
+  Serial2.begin(9600);
+#elif defined ARDUINO_AVR_MEGA2560
+  Serial1.begin(9600);
+#endif
+
   hbState = LOW;
 }
 
@@ -37,15 +30,22 @@ void loop() {
   dataBlock += (String)getWaterTemp();
   dataBlock += "}";
   dataBlock += "}";
-  rs485.println(dataBlock);
+#ifdef ESP32
+  Serial2.println(dataBlock);
+#elif defined ARDUINO_AVR_MEGA2560
+  Serial1.println(dataBlock);
+#endif
   delay(1000);
 }
 
 int getPressure(void) {
+#ifdef __DEBUG__
+  Serial.println("getPressure");
+#endif
   return analogRead(PRESSURE_PORT);
 }
 
 
-int getWaterTemp(void) {
+float getWaterTemp(void) {
   return out_temp.read();
 }
