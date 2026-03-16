@@ -11,6 +11,7 @@
   #include <thermistor.h>
   
 #ifdef ARDUINO_AVR_MEGA2560
+  #define ADC_RES                   1023
   #define V_BATT_PORT               A0
   #define I_BATT_PORT               A1
   #define PRESSURE_PORT             A2
@@ -31,6 +32,7 @@
   #define WDOG_PIN                  52
 #elif defined(ESP32)
   #include <esp_task_wdt.h>
+  #define ADC_RES                   4095
   #define V_BATT_PORT               36
   #define I_BATT_PORT               39
   #define PRESSURE_PORT             32
@@ -83,10 +85,14 @@
 #define NTC_BETA                  3950
 #define NTC_25C                   10000
 
+#define ACS_CALIBRATION_DELAY     2
+#define ACS_CALIBRATION_COUNT     500
+
 Adafruit_MPU6050 mpu;
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 sensors_event_t a, g, temp, compass;
-ACS712  acs(I_BATT_PORT, 20.0, 1023, 100);
+ACS712  acs(I_BATT_PORT, 20.0, ADC_RES, 100);
+
 THERMISTOR out_temp(THERMISTOR_PORT, NTC_25C, NTC_BETA, NTC_RES);
 
 bool hbState;
@@ -95,6 +101,7 @@ bool alarmState;
 int alarmData;
 float declination = 0.227;
 float heading = 0.0;
+float acs_offset = 0.0;
 
 /* Yes, I know this will get overwritten on normal start
  *  but I want to be sure
@@ -131,6 +138,7 @@ bool checkAlarms(void);
 void wipeEeprom(void);
 void saveConfig(void);
 void cmdResult(String res);
+void calibrateCurrentSensor(void);
 
 void increasePwmLL(void);
 void decreasePwmLL(void);

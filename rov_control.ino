@@ -1,4 +1,6 @@
-/* Copyright (C) 2026 Christopher F. Moran */
+/* Copyright (C) 2026 Christopher F. Moran            */
+/* Portions Copyright (C) Adafruit Industries         */
+/* Portions Copyright (C) Honeywell Microelectronics  */
 
 #include "rov_control.h"
 
@@ -13,8 +15,11 @@ void setup() {
   pinMode(LED_HEARTBEAT, OUTPUT);
   pinMode(LED_ACTIVITY, OUTPUT);
   pinMode(LED_FAULT, OUTPUT);
+#ifdef ESP32
+  pinMode(EEPROM_CLEAR, INPUT);
+#elif defined ARDUINO_AVR_MEGA2560
   pinMode(EEPROM_CLEAR, INPUT_PULLUP);
-
+#endif
   hbState = HIGH;
   lightState = LOW;
   alarmState = LOW;
@@ -26,9 +31,17 @@ void setup() {
 #ifdef __DEBUG__
   Serial.println("Start RS485");
 #endif
+#ifdef ESP32
+  Serial2.begin(9600);
+#elif defined ARDUINO_AVR_MEGA2560
   Serial1.begin(9600);
-
+#endif
   motorStop();
+  // We need to "zero" on the baseline current draw.
+  // This means everything EXCEPT the motors are powered on
+  //
+  Serial.println("Calibrate zero current");
+  calibrateCurrentSensor();
 
   if(digitalRead(EEPROM_CLEAR) == LOW) {
     wipeEeprom();
@@ -66,7 +79,7 @@ void setup() {
 #ifdef __DEBUG__
     Serial.println("HMC5883 FAILED!");
 #endif
-    digitalWrite(LED_ACTIVITY, LOW);
+    digitalWrite(LED_ACTIVITY, HIGH);
     digitalWrite(LED_HEARTBEAT, LOW);
     digitalWrite(LED_FAULT, HIGH);
     while(1) {
@@ -91,7 +104,7 @@ void setup() {
 
 #ifdef ESP32
 #ifdef __DEBUG__
-  Serial.println("Init Watchdog");
+  Serial.println("Watchdog Setup");
 #endif
   esp_task_wdt_config_t twdt_config = {
     .timeout_ms = 2000,
@@ -105,20 +118,35 @@ void setup() {
   digitalWrite(LED_ACTIVITY, LOW);
   digitalWrite(LED_HEARTBEAT, LOW);
   digitalWrite(LED_FAULT, LOW);
+#ifdef __DEBUG__
+  Serial.println("Setup complete!");
+#endif
 }
 
+/* To make sure that we reset the watchdog correctly  */
+/* we do as little as possible within loop()          */
 void loop() {
+#ifdef ESP32
+  if(Serial2.available() > 0) {
+#elif defined ARDUINO_AVR_MEGA2560
   if(Serial1.available() > 0) {
+#endif
     getCommand();
   }
   heartBeat();
 }
 
+/* Pull a command string from the RS-485 link and     */
+/* see if it contains a command                       */
 void getCommand(void) {
   String cmd;
   
   digitalWrite(LED_ACTIVITY, HIGH);
+#ifdef ESP32
+  cmd = Serial2.readString();
+#elif defined ARDUINO_AVR_MEGA2560
   cmd = Serial1.readString();
+#endif
   cmd.trim(); /* Remove whitespace at end */
   if(cmd == "STOP") {
     motorStop();
@@ -201,6 +229,7 @@ void getCommand(void) {
   digitalWrite(LED_ACTIVITY, LOW);
 }
 
+/* Gather sensor information and send it over the link  */
 void sendLogData(void) {
   digitalWrite(LED_ACTIVITY, HIGH);
 #ifdef __DEBUG__
@@ -284,12 +313,19 @@ void sendLogData(void) {
 #ifdef __DEBUGDEBUG__
   Serial.println(dataBlock);
 #endif
+#ifdef ESP32
+  Serial2.println(dataBlock);
+#elif defined ARDUINO_AVR_MEGA2560
   Serial1.println(dataBlock);
+#endif
   digitalWrite(LED_ACTIVITY, LOW);
 }
 
+/* Reset the Watchdog timer before it can reset the controller  */
+/* AVR based controllers need an external WDT, but ESP32 uses   */
+/* built-in timer.                                              */
 void heartBeat(void) {
-#ifdef __DEBUG__
+#ifdef __DEBUGDEBUG__
   Serial.println("heartBeat");
 #endif
 #ifdef ARDUINO_AVR_MEGA2560
@@ -310,6 +346,7 @@ void heartBeat(void) {
 #endif
 }
 
+/* This is a bit rubbish right now, and needs work!     */
 bool checkAlarms(void) {
   /* If there are NO alarms, check for any new problems */
     if(getVolts() < BATT_ALARM_ON) {
@@ -335,10 +372,14 @@ void cmdResult(String res) {
   String dataBlock = "{\"result\": \"";
   dataBlock += res;
   dataBlock += "\"}";
+#ifdef ESP32
+  Serial2.println(dataBlock);
+#elif defined ARDUINO_AVR_MEGA2560
   Serial1.println(dataBlock);
+#endif
 }
 
-/* Control Primatives */
+/* Motor Control Primitives     */
 
 void leftStop(void) {
 #ifdef __DEBUG__
@@ -569,7 +610,7 @@ float getCurrent(void) {
 #ifdef __DEBUG__
   Serial.println("getCurrent");
 #endif
-  return acs.mA_DC();
+  return acs.mA_DC() - acs_offset;
 }
 
 void getIMU(void) {
@@ -655,7 +696,9 @@ float getHeading(void) {
   return (heading * (float)180/M_PI);
 }
 
-/* Erase and default EEPROM contents */
+/* Erase and default EEPROM contents                */
+/* ESP32 does some clever things with Flash Storage */
+/* but the library hides it from us.                */
 void wipeEeprom(void) {
 #ifdef __DEBUG__
   Serial.println("Default EEPROM");
@@ -833,4 +876,14 @@ int getMoisture(void) {
 
 float getWaterTemp(void) {
   return out_temp.read();
+}
+
+void calibrateCurrentSensor(void) {
+  int i = 0;
+  float sum = 0;
+  for(int i = 0; i < ACS_CALIBRATION_COUNT; i++) {
+    sum += acs.mA_DC();
+    delay(ACS_CALIBRATION_DELAY);
+  }
+  acs_offset = sum/(float)ACS_CALIBRATION_COUNT;
 }

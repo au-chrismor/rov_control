@@ -14,7 +14,13 @@ Because this is a sealed assembly, it is essential that the components be thorou
 
 4.  Connect the pressure sensor to the 5V rail and measure the output.  At sea level the output should be close to 0.5V.
 
-5.  Connect the IIC peripherals to the Arduino Mega.  Connect the GND input of the Arduino Mega to the PSU output, but *do not* connect the 5V at this time.  The board can be powered from the host USB for now.  Using the Serial Monitor application, check for errors at startup.
+5.  Connect the IIC peripherals to the Controller.  Connect the GND input of the Arduino Mega to the PSU output, but *do not* connect the 5V at this time.  The board can be powered from the host USB for now.  Using the Serial Monitor application, check for errors at startup.
 
 6.  Connect motors to controllers.  Run each motor to verify operation.
+
+7.  Test the moisture sensor, making note of the "dry" reading.  Adjust the software threshold if required.
+
+8.  Test the output of the voltage divider for the battery **before** connecting it to the analogue input.
+
+9.  Connect the thermistor signal to the analogue pin.  Verify operation.
 
